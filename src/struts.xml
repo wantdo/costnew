@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="default" extends="struts-default">
+	<interceptors>
+		<interceptor name="loginIntercepter" class="com.wantdo.interceptor.CheckLoginInterceptor"></interceptor>
+		<interceptor-stack name="loginStack">  
+                <interceptor-ref name="defaultStack" />  
+                <interceptor-ref name="loginIntercepter" />  
+            </interceptor-stack>
+	</interceptors>
+		<!-- <global-exception-mappings>
+				<exception-mapping result="error" exception="java.lang.Exception"/>
+		</global-exception-mappings>  -->
+		<action name="UploadAction" class="UploadAction">
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">31457280</param>  
+			</interceptor-ref>
+			<interceptor-ref name="completeStack"></interceptor-ref>
+			<interceptor-ref name="execAndWait">
+				<param name="delaySleepInterval">500</param>
+			</interceptor-ref>
+			<result>/download.jsp</result>
+			<result name="wait">/wait.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+		<action name="DownloadAction" class="com.wantdo.cost.action.DownloadAction">
+			<result type="stream">
+				<param name="contentType">application/vnd.ms-excel;charset=UTF-8</param>
+				<param name="inputName">downloadFile</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		<action name="ShopStatAction" class="ShopStatAction"> 
+			<interceptor-ref name="completeStack"/>
+			<interceptor-ref name="execAndWait"> 
+				<param name="delaySleepInterval">500</param> 
+			</interceptor-ref>
+			<result>/shop/shopStatResult.jsp</result> 
+			<result name="wait">/shop/shopWait.jsp</result> 
+		</action>
+		<action name="ExpEditAction" class = "ExpEditAction">
+			<interceptor-ref name="loginStack" />
+			<result>/express/list.jsp</result>
+			<result name = "login">/express/login.jsp</result>
+			<result name ="update">/express/update.jsp</result>
+			<result name = "wait">/express/wait.jsp</result>
+		</action>
+		<action name="loginaction" class="LoginAction">
+			<interceptor-ref name="loginStack" />
+			<result>/express/list.jsp</result>
+			<result name = "login">/express/login.jsp</result>
+		</action>
+		<action name="EditLogAction" class="EditLogAction">
+			<interceptor-ref name="loginStack" />
+			<result>/express/editlog.jsp</result>
+		</action>
+	</package>
+</struts>    

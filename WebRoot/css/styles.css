@@ -1,0 +1,31 @@
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,
+form,fieldset,input,textarea,p,blockquote,th,td
+{
+	margin:0px;
+	padding:0px;
+}
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section
+{
+	display:block;
+}
+html,body
+{
+	margin:0px;
+	padding:0px;	
+	height:100%;
+}
+body
+{
+	font-family:'Microsoft YaHei',微软雅黑,Verdana,arial,sans-serif;
+	background:url('../images/bg.jpg') repeat scroll left top #FFF;
+	font-weight:400;
+	font-size:16px;
+	color:#1D3C41;
+	overflow-y:scroll;
+}
+a
+{
+	color:#333;
+	text-decoration:none;
+}

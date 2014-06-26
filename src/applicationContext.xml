@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"></property>
+		<property name="url" value="jdbc:sqlserver://localhost:1433;"></property>
+		<property name="username" value="sa"></property>
+		<property name="password" value="wantdo123"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.SQLServerDialect
+				</prop>
+				<!-- <prop key="hibernate.show_sql">true</prop> <prop key="hibernate.format_sql">true</prop> -->
+				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/wantdo/cost/model/WspOrdermst.hbm.xml</value>
+				<value>com/wantdo/cost/model/EcEordermst.hbm.xml</value>
+				<value>com/wantdo/cost/model/WspShops.hbm.xml</value>
+				<value>com/wantdo/cost/model/Province.hbm.xml</value>
+				<value>com/wantdo/cost/model/Proname.hbm.xml</value>
+				<value>com/wantdo/cost/model/Person.hbm.xml</value>
+				<value>com/wantdo/cost/model/Sto.hbm.xml</value>
+				<value>com/wantdo/cost/model/EditLog.hbm.xml</value>
+				<value>com/wantdo/cost/model/Traceno.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="LoginAction" class="com.wantdo.cost.action.LoginAction">
+		<property name="personService">
+			<ref bean="PersonService" />
+		</property>
+		<property name="pronameService">
+			<ref bean="PronameService" />
+		</property>
+	</bean>
+	<bean id="PersonDAO" class="com.wantdo.cost.dao.impl.PersonDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="PersonService" class="com.wantdo.cost.service.impl.PersonService">
+		<property name="personDAO">
+			<ref bean="PersonDAO" />
+		</property>
+	</bean>
+	<bean id="ExpEditAction" class="com.wantdo.cost.action.ExpEditAction">
+		<property name="pronameService">
+			<ref bean="PronameService" />
+		</property>
+		<property name="stoService">
+			<ref bean="StoService" />
+		</property>
+	</bean>
+	<bean id="StoService" class="com.wantdo.cost.service.impl.StoService">
+		<property name="stoDAO">
+			<ref bean="StoDAO" />
+		</property>
+	</bean>
+	<bean id="PronameService" class="com.wantdo.cost.service.impl.PronameService">
+		<property name="pronameDAO">
+			<ref bean="PronameDAO" />
+		</property>
+	</bean>
+
+	<bean id="PronameDAO" class="com.wantdo.cost.dao.impl.PronameDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="StoDAO" class="com.wantdo.cost.dao.impl.StoDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="WspOrdermstDAO" class="com.wantdo.cost.dao.impl.WspOrdermstDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="EcEordermstDAO" class="com.wantdo.cost.dao.impl.EcEordermstDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="WspOrdermstService" class="com.wantdo.cost.service.impl.WspOrdermstService">
+		<property name="wspOrdermstDao">
+			<ref bean="WspOrdermstDAO"></ref>
+		</property>
+	</bean>
+	<bean id="WspShopsDAO" class="com.wantdo.cost.dao.impl.WspShopsDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="UploadAction" class="com.wantdo.cost.action.UploadAction"
+		scope="prototype">
+		<property name="service" ref="WspOrdermstService"></property>
+		<property name="tracenoService" ref="TracenoService"></property>
+		<property name="costCalcUtil" ref="CostCalcUtil"></property>
+	</bean>
+	<bean id="DownloadAction" class="com.wantdo.cost.action.DownloadAction">
+	</bean>
+	<bean id="ShopStatAction" class="com.wantdo.cost.action.ShopStatAction"
+		scope="prototype">
+		<property name="service" ref="WspOrdermstService"></property>
+	</bean>
+	<bean id="ProvinceDAO" class="com.wantdo.cost.dao.impl.ProvinceDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="EditLogAction" class="com.wantdo.cost.action.EditLogAction">
+		<property name="editLogService">
+			<ref bean="EditLogService" />
+		</property>
+	</bean>
+	<bean id="EditLogService" class="com.wantdo.cost.service.impl.EditLogService">
+		<property name="editLogDAO">
+			<ref bean="EditLogDAO" />
+		</property>
+	</bean>
+	<bean id="EditLogDAO" class="com.wantdo.cost.dao.impl.EditLogDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="CostCalcUtil" class="com.wantdo.cost.utils.CostCalcUtil">
+		<property name="pronameService">
+			<ref bean="PronameService" />
+		</property>
+		<property name="stoService">
+			<ref bean="StoService" />
+		</property>
+	</bean>
+	<bean id="TracenoDAO" class="com.wantdo.cost.dao.impl.TracenoDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="TracenoService" class="com.wantdo.cost.service.impl.TracenoService">
+		<property name="tracenoDAO">
+			<ref bean="TracenoDAO" />
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,89 @@
+h5
+{
+	font-size:28px;
+	line-height:40px;
+	margin-bottom:15px;
+}
+.container
+{
+	display:block;
+	text-align:center;
+	width:960px;
+	height:100%;
+	margin:0 auto;
+	padding-top:40px;
+}
+#error
+{
+	background:transparent url('../images/500e.png') right 80px no-repeat;
+	width:680px;
+	height:280px;
+	position:relative;
+	margin:0 auto;
+}
+#error #pacman
+{
+	width:207px;
+	height:207px;
+	position:absolute;
+	left:50px;
+	top:50px;
+	background:transparent url('../images/pacman_eats.png') 0 0 no-repeat;
+	-moz-animation:eats 2s linear 0s infinite alternate;
+	-webkit-animation:eats 2s linear 0s infinite alternate;
+	-ms-animation:eats 2s linear 0s infinite alternate;
+	animation:eats 2s linear 0s infinite alternate;
+}
+.pacman_eats
+{
+	background:transparent url('../images/pacman_eats.png') 0 -207px no-repeat!important;
+}
+
+@-webkit-keyframes eats {
+	from {
+		left:50px; top:50px;
+	}
+	to {
+		left:280px; top:50px;
+	}
+}
+@-moz-keyframes eats {
+	from {
+		left:50px; top:50px;
+	}
+	to {
+		left:200px; top:50px;
+	}
+}
+@-ms-keyframes eats {
+	from {
+		left:50px; top:50px;
+	}
+	to {
+		left:200px; top:50px;
+	}
+}
+@keyframes eats {
+	from {
+		left:50px; top:50px;
+	}
+	to {
+		left:200px; top:50px;
+	}
+}
+#content
+{
+	width:100%;
+	padding:100%;
+	margin:0px;
+	padding:0px;
+	float:left;
+}
+#content h5
+{
+	text-transform:uppercase;
+	color:#333;
+	padding:50px 0px;
+	font-weight:bold;
+	text-align:center;
+}
