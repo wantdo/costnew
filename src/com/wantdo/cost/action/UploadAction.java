@@ -74,6 +74,7 @@ public class UploadAction extends ActionSupport {
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub
+		
 		long start1 = System.currentTimeMillis();
 		
 		InputStream in = null;
@@ -90,6 +91,9 @@ public class UploadAction extends ActionSupport {
 			}
 			in = new BufferedInputStream(new FileInputStream(upload));
 			out = new FileOutputStream(temp);
+			
+			costCalcUtil.acquisition(); //设置快递费用的参数
+			
 			byte[] b = new byte[1024];
 			int len = 0;
 			while ((len = in.read(b)) != -1) {

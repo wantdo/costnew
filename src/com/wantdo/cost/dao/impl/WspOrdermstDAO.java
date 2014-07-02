@@ -2,12 +2,14 @@ package com.wantdo.cost.dao.impl;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -169,6 +171,7 @@ public class WspOrdermstDAO extends HibernateDaoSupport implements
 		}
 	}
 
+	// 把traceno放到tracenos数组里批量查询 数组长度太长，报错
 	@Override
 	public List<Object[]> findByTracenos(String[] tracenos) {
 		try {
@@ -184,17 +187,26 @@ public class WspOrdermstDAO extends HibernateDaoSupport implements
 
 	}
 
+	// 通过数据库查询 效率较高
 	public List<Object[]> findByTracenosNew() {
+		Session session = this.getSession();
+		Transaction tx = session.beginTransaction();
+		List<Object[]> list = new ArrayList<Object[]>();
+
 		try {
 			String queryString = "from Traceno tr,WspOrdermst wsp,EcEordermst ec,WspShops shops,Province pro"
 					+ " where wsp.relid=ec.relid and wsp.shopid=shops.id and "
 					+ "substring(ec.province,1,3)=pro.id.provinceno and ec.traceno=tr.traceno ";
-			Query query = getSession().createQuery(queryString);
-			return query.list();
-		} catch (RuntimeException e) {
-			throw e;	
+			Query query = session.createQuery(queryString);
+			list = query.list();
+			tx.commit();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			releaseSession(session);
 		}
-
+		return list;
 	}
 
 	public List<Object[]> findShopStat() {

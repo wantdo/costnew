@@ -47,24 +47,31 @@ public class TracenoDAO extends HibernateDaoSupport implements ITracenoDAO {
 			throw re;
 		}
 	}
-	
+
+	// 批量存储
 	public void saveTracenos(String[] tracenos) {
 		Session session = getSession();
 		Transaction tx = session.beginTransaction();
-		
-		for(int i=0;i<tracenos.length;i++) {
-			Traceno traceno = new Traceno();
-			traceno.setTraceno(tracenos[i]);
-			session.save(traceno);
-			
-			if(i % 30 == 0) {
-				session.flush();
-				session.clear();
+
+		try {
+			for (int i = 0; i < tracenos.length; i++) {
+				Traceno traceno = new Traceno();
+				traceno.setTraceno(tracenos[i]);
+				session.save(traceno);
+
+				if (i % 30 == 0) {
+					session.flush();
+					session.clear();
+				}
 			}
+			tx.commit();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			releaseSession(session);
 		}
-		
-		tx.commit();
-		session.close();
+
 	}
 
 	public void delete(Traceno persistentInstance) {
@@ -77,17 +84,24 @@ public class TracenoDAO extends HibernateDaoSupport implements ITracenoDAO {
 			throw re;
 		}
 	}
-	
-	public void deleteTableData() {                         //删除表中所有数据
+
+	// 删除表中所有的记录
+	public void deleteTableData() { // 删除表中所有数据
 		String queryString = "delete Traceno where 1=1";
 		Session session = getSession();
 		Transaction tx = session.beginTransaction();
-		
-		Query query=session.createQuery(queryString);
-		query.executeUpdate();
-		
-		tx.commit();
-		session.close();
+
+		try {
+			Query query = session.createQuery(queryString);
+			query.executeUpdate();
+			tx.commit();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			releaseSession(session);
+		}
+
 	}
 
 	public Traceno findById(java.lang.Integer id) {

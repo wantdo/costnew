@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
 <struts>
+	<constant name="struts.multipart.maxSize" value="524288000" /> <!-- 设置默认上传文件的最大值 -->
 	<package name="default" extends="struts-default">
 	<interceptors>
 		<interceptor name="loginIntercepter" class="com.wantdo.interceptor.CheckLoginInterceptor"></interceptor>
@@ -9,9 +10,9 @@
                 <interceptor-ref name="loginIntercepter" />  
             </interceptor-stack>
 	</interceptors>
-		<!-- <global-exception-mappings>
+		<global-exception-mappings>
 				<exception-mapping result="error" exception="java.lang.Exception"/>
-		</global-exception-mappings>  -->
+		</global-exception-mappings>
 		<action name="UploadAction" class="UploadAction">
 			<interceptor-ref name="fileUpload">
 				<param name="maximumSize">31457280</param>  
@@ -20,7 +21,7 @@
 			<interceptor-ref name="execAndWait">
 				<param name="delaySleepInterval">500</param>
 			</interceptor-ref>
-			<result>/download.jsp</result>
+			<result>/download1.jsp</result>
 			<result name="wait">/wait.jsp</result>
 			<result name="error">/error.jsp</result>
 		</action>
