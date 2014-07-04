@@ -56,7 +56,7 @@ public class TracenoDAO extends HibernateDaoSupport implements ITracenoDAO {
 		try {
 			for (int i = 0; i < tracenos.length; i++) {
 				Traceno traceno = new Traceno();
-				traceno.setTraceno(tracenos[i]);
+				traceno.setTraceno(tracenos[i]); 
 				session.save(traceno);
 
 				if (i % 30 == 0) {
