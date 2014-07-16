@@ -14,5 +14,4 @@ public class CostTest {
 		double cost=calcUtil.getCostByProno("’„Ω≠", 3.0);
 		System.out.println(cost);
 	}
-
 }

@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -38,10 +40,11 @@ public class UploadAction extends ActionSupport {
 	private File upload;
 	private IWspOrdermstService service;
 	private ITracenoService tracenoService;
+
 	public ITracenoService getTracenoService() {
 		return tracenoService;
 	}
-	
+
 	public void setTracenoService(ITracenoService tracenoService) {
 		this.tracenoService = tracenoService;
 	}
@@ -74,9 +77,9 @@ public class UploadAction extends ActionSupport {
 	@Override
 	public String execute() {
 		// TODO Auto-generated method stub
-		
+
 		long start1 = System.currentTimeMillis();
-		
+
 		InputStream in = null;
 		OutputStream out = null;
 		try {
@@ -91,9 +94,9 @@ public class UploadAction extends ActionSupport {
 			}
 			in = new BufferedInputStream(new FileInputStream(upload));
 			out = new FileOutputStream(temp);
-			
-			costCalcUtil.acquisition(); //设置快递费用的参数
-			
+
+			costCalcUtil.acquisition(); // 设置快递费用的参数
+
 			byte[] b = new byte[1024];
 			int len = 0;
 			while ((len = in.read(b)) != -1) {
@@ -126,59 +129,67 @@ public class UploadAction extends ActionSupport {
 		}
 
 		String[] col = excelUtil.getColumnData(0, 0);
-		List<String> listCol = new ArrayList(Arrays.asList(col));  
-		/*aslist()方法返回的是一个Arrays$ArrayList,调用remove或者add方法将报
-		java.lang.UnsupportedOperationException，所以得转换为ArrayList*/
-		
-		tracenoService.deleteTableData(); //删除数据表中的数据	
-		tracenoService.saveTracenos(col);	//把订单号存到数据库表中
-		
+		List<String[]> allDate = excelUtil.getAllData(0);// 获取excel表里的所有数据
+
+		List<String> listCol = new ArrayList(Arrays.asList(col));
+		/*
+		 * aslist()方法返回的是一个Arrays$ArrayList,调用remove或者add方法将报
+		 * java.lang.UnsupportedOperationException，所以得转换为ArrayList
+		 */
+
+		tracenoService.deleteTableData(); // 删除数据表中的数据
+		tracenoService.saveTracenos(col); // 把订单号存到数据库表中
+
 		boolean isWeight = false;
-		String[] weightCol = null;
+		//String[] weightCol = null;
 		if (excelUtil.getColumnNum(0) > 1) {
 			isWeight = true;
-			weightCol = excelUtil.getColumnData(0, 1);
+			//weightCol = excelUtil.getColumnData(0, 1);
 		}
+
 		total = 0.0;
 		totalNum = col.length;
-		
-		
+
 		long start = System.currentTimeMillis();
-		
-		//List<Object[]> resultList = service.findByTracenos(col);
+
 		List<Object[]> resultList = service.findByTracenosNew();
-		
+
 		long end = System.currentTimeMillis();
 		System.out
 				.println("--------------------------------------------------------------------------");
 		System.out.println("查询所用时间：" + (end - start));
-		
+
 		List<String> right = new ArrayList<String>();
-		
+
 		for (int i = 0; i < resultList.size(); ++i) {
 			handleNum = i + 1;
 			Object[] str = resultList.get(i);
-
-			/*
-			 * if (listObject == null) { return ERROR; }
-			 */
-
-			Traceno traceno = (Traceno)	str[0];
+			String weight = null;
+			
+			Traceno traceno = (Traceno) str[0];
 			WspOrdermst wspOrdermst = (WspOrdermst) str[1];
 			EcEordermst ecEordermst = (EcEordermst) str[2];
 			WspShops wspShops = (WspShops) str[3];
 			Province province = (Province) str[4];
 
 			Double cost = 0.0;
+
 			if (isWeight) {
-				if (weightCol[i] == null || weightCol[i] == "") {
-					weightCol[i] = "1.0";
+				for (int t = 0; t < allDate.size(); t++) {   //获取和查询出来的快递单号对应的重量
+					if (traceno.getTraceno().equals(allDate.get(t)[0])) {
+						weight = allDate.get(t)[1];
+						break;
+					}
+				}
+				if (weight == null || weight == "") {
+					weight = "1.0";
 				}
 				cost = costCalcUtil.getCostByProno(province.getPrvcname(),
-						Double.parseDouble(weightCol[i]));
+						Double.parseDouble(weight));
 			} else {
 				cost = costCalcUtil.getCostByProno(province.getPrvcname());
 			}
+
 			total += cost;
 			String costDetail = null;
 			if (cost == 0.0) {
@@ -193,7 +204,8 @@ public class UploadAction extends ActionSupport {
 			} else {
 				memberIdDetail = memberId;
 			}
-			String[] row = new String[] { traceno.getTraceno(), "申通", costDetail, // 快递单号，快递公司，快递费用
+			String[] row = new String[] { traceno.getTraceno(), "申通",
+					costDetail, // 快递单号，快递公司，快递费用
 					String.valueOf(ecEordermst.getDeliveraddr()), // 收货地址
 					String.valueOf(wspShops.getShopname()), // 店铺名称
 					String.valueOf(wspOrdermst.getRelid()), // 订单编号
@@ -205,14 +217,14 @@ public class UploadAction extends ActionSupport {
 			right.add(traceno.getTraceno());
 			list.add(row);
 		}
-		listCol.removeAll(right);//出错的订单列表
+		listCol.removeAll(right);// 出错的订单列表
 		if (!listCol.isEmpty()) {
-			
-			for (int i=0;i<listCol.size();i++) {
+
+			for (int i = 0; i < listCol.size(); i++) {
 				String[] rowErr = new String[] { listCol.get(i), "出错的订单" };
 				err.add(rowErr);
 			}
-			
+
 			String dateErr = new SimpleDateFormat("yyyy_MM_dd_HH_mm")
 					.format(new Date());
 			errExcelName = dateErr + "_error.xls";
@@ -254,12 +266,12 @@ public class UploadAction extends ActionSupport {
 		totalList.addAll(err);
 
 		excelUtil.writeExcel(totalList, format, excelFile, total);
-		
+
 		long end1 = System.currentTimeMillis();
 		System.out
 				.println("--------------------------------------------------------------------------");
 		System.out.println("总共所用时间：" + (end1 - start1));
-		
+
 		return SUCCESS;
 	}
 
@@ -374,7 +386,7 @@ public class UploadAction extends ActionSupport {
 	public void setTotalNum(int totalNum) {
 		this.totalNum = totalNum;
 	}
-	
+
 	public CostCalcUtil getCostCalcUtil() {
 		return costCalcUtil;
 	}

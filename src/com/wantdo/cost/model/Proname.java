@@ -21,7 +21,12 @@ public class Proname implements java.io.Serializable {
 	/** default constructor */
 	public Proname() {
 	}
-
+	
+	public Proname(Integer id,String provice) {
+		this.id = id;
+		this.province = provice;
+	}
+	
 	/** full constructor */
 	public Proname(String province,Set<Sto> sto) {
 		this.province = province;

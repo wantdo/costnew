@@ -1,6 +1,5 @@
 package com.wantdo.cost.model;
 
-
 /**
  * Sto entity. @author MyEclipse Persistence Tools
  */
@@ -22,9 +21,14 @@ public class Sto implements java.io.Serializable {
 	public Sto() {
 	}
 
+	/*public Sto(String mingCheng, Double firstWeight, Double firstPrice,
+			Double secondPrice, Integer retention) {
+		this.proname.getProvince() = shengming;
+	}*/
+
 	/** full constructor */
 	public Sto(Proname proname, Double firstWeight, Double firstPrice,
-			Double secPrice,Integer retention) {
+			Double secPrice, Integer retention) {
 		this.proname = proname;
 		this.firstWeight = firstWeight;
 		this.firstPrice = firstPrice;
